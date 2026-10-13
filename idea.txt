@@ -1,0 +1,7 @@
+il server deve avere una lista di thread che gestiscono i client connessi
+
+il protocollo sarà una classe a parte
+
+prendo le risposte da file di testo così da consentire l'aggiunta di più personalità
+
+gestore client: thread, quando si connette un client gli assegna un numero, il client tramite gui vede quale personalità è stata scelta e risponde in base a quello, la domanda non ha bisogno di tenerne conto 
