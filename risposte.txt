@@ -1,0 +1,4 @@
+SAGGIO=La pazienza e la chiave di ogni soluzione.
+COMICO=Hai provato a spegnere e riaccendere la tua vita?
+PESSIMISTA=Non funzionera comunque nulla, mi dispiace.
+SERIO=Focalizzati sui tuoi obiettivi e agisci di conseguenza.

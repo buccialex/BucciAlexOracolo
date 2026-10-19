@@ -10,11 +10,12 @@ package buccialexoracoloserver;
  */
 public class BucciAlexOracoloServer {
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) {
-        // TODO code application logic here
+        try {
+            new Server().avvia();
+        } catch (Exception ex) {
+            System.err.println("Impossibile avviare il server: " + ex.getMessage());
+        }
     }
     
 }

@@ -19,19 +19,41 @@ public class GestoreClient implements Runnable{
     private Server server;
     private DataInputStream in;
     private DataOutputStream out;
+    private Protocollo protocollo;
     private boolean attivo = true;
     
-    public GestoreClient(Socket clientSocket, Server server) {
-        
+    public GestoreClient(Socket clientSocket, Server server, GestoreFile gestoreRisposte) throws IOException {
+        this.clientSocket = clientSocket;
+        this.server = server;
+        this.in = new DataInputStream(clientSocket.getInputStream());
+        this.out = new DataOutputStream(clientSocket.getOutputStream());
+        this.protocollo = new Protocollo(gestoreRisposte);
     }
     
     public synchronized void chiudiConnessione() {
-        
+        attivo = false;
+        try {
+            clientSocket.close();
+        } catch (IOException ex) {
+            // La connessione e gia chiusa.
+        }
     }
     
     @Override
     public void run() {
-        
+        try {
+            while (attivo) {
+                String messaggio = in.readUTF();
+                String risposta = protocollo.interpreta(messaggio);
+                out.writeUTF(risposta);
+                out.flush();
+            }
+        } catch (IOException ex) {
+            if (attivo) {
+                System.err.println("Connessione client interrotta: " + ex.getMessage());
+                chiudiConnessione();
+            }
+        } 
     }
     
 }
