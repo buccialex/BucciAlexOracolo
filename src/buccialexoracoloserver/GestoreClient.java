@@ -13,7 +13,7 @@ import java.net.Socket;
  *
  * @author bucci.alex
  */
-public class GestoreClient implements Runnable{
+public class GestoreClient implements Runnable {
 
     private Socket clientSocket;
     private Server server;
@@ -21,15 +21,20 @@ public class GestoreClient implements Runnable{
     private DataOutputStream out;
     private Protocollo protocollo;
     private boolean attivo = true;
-    
-    public GestoreClient(Socket clientSocket, Server server, GestoreFile gestoreRisposte) throws IOException {
-        this.clientSocket = clientSocket;
-        this.server = server;
-        this.in = new DataInputStream(clientSocket.getInputStream());
-        this.out = new DataOutputStream(clientSocket.getOutputStream());
-        this.protocollo = new Protocollo(gestoreRisposte);
+
+    public GestoreClient(Socket clientSocket, Server server, GestoreFile gestoreRisposte) {
+        try {
+            this.clientSocket = clientSocket;
+            this.server = server;
+            this.in = new DataInputStream(clientSocket.getInputStream());
+            this.out = new DataOutputStream(clientSocket.getOutputStream());
+            this.protocollo = new Protocollo(gestoreRisposte);
+        } catch (IOException e) {
+
+        }
+
     }
-    
+
     public synchronized void chiudiConnessione() {
         attivo = false;
         try {
@@ -38,7 +43,7 @@ public class GestoreClient implements Runnable{
             // La connessione e gia chiusa.
         }
     }
-    
+
     @Override
     public void run() {
         try {
@@ -53,7 +58,7 @@ public class GestoreClient implements Runnable{
                 System.err.println("Connessione client interrotta: " + ex.getMessage());
                 chiudiConnessione();
             }
-        } 
+        }
     }
-    
+
 }

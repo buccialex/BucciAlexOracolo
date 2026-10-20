@@ -4,28 +4,23 @@ package buccialexoracoloserver;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 /**
  *
  * @author bucci.alex
  */
 public class Protocollo {
-    public final String AIUTO = "HELP";
-    private final String COMANDO_PERSONA = "PERSONA";
-    private static final String COMANDO_DOMANDA = "DOMANDA";
 
+    private final String AIUTO = "HELP";
+    private final String COMANDO_PERSONA = "PERSONA";
+    private final String COMANDO_DOMANDA = "DOMANDA";
     private String domanda;
     private String personalita;
     private GestoreFile gestoreRisposte;
+
     public Protocollo(GestoreFile gestoreRisposte) {
         this.domanda = "";
         this.personalita = "";
         this.gestoreRisposte = gestoreRisposte;
-    }
-
-    public Protocollo(String domanda, String personalita){
-        this.domanda = domanda;
-        this.personalita = personalita;
     }
 
     public synchronized String interpreta(String messaggio) {
@@ -58,11 +53,9 @@ public class Protocollo {
                     return "ERRORE_DEVI_PRIMA_IMPOSTARE_UNA_PERSONALITA";
                 }
                 domanda = parametro;
-                
-                // === 🟢 MODIFICA 4: Restituisce la risposta caricata dal file anziché solo "OK_DOMANDA_..." ===
+
                 return "ORACOLO: " + gestoreRisposte.getRisposta(personalita);
-                
-                
+
             default:
                 return "ERRORE_COMANDO_NON_RICONOSCIUTO";
         }

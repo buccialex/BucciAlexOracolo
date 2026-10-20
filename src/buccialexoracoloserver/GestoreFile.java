@@ -26,7 +26,7 @@ public class GestoreFile {
             while ((riga = reader.readLine()) != null) {
                 riga = riga.trim();
                 if (riga.isEmpty() || riga.startsWith("#")) {
-                    continue; // Salta righe vuote e commenti
+                    continue; 
                 }
                 String[] parti = riga.split("=", 2);
                 if (parti.length == 2) {
