@@ -4,12 +4,21 @@
  */
 package buccialexoracoloclient;
 
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.Socket;
+import java.util.Scanner;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author bucci.alex
  */
 public class GUIOracolo extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GUIOracolo.class.getName());
 
     /**
@@ -17,6 +26,7 @@ public class GUIOracolo extends javax.swing.JFrame {
      */
     public GUIOracolo() {
         initComponents();
+        getPersona("risposte.txt");
     }
 
     /**
@@ -31,6 +41,9 @@ public class GUIOracolo extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+        cbPersona = new javax.swing.JComboBox<>();
+        txtDomanda = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new java.awt.GridBagLayout());
@@ -44,14 +57,66 @@ public class GUIOracolo extends javax.swing.JFrame {
         jLabel1.setText("ORACOLO");
         jPanel1.add(jLabel1, java.awt.BorderLayout.CENTER);
 
+        cbPersona.setName("cbPersona"); // NOI18N
+        jPanel1.add(cbPersona, java.awt.BorderLayout.PAGE_START);
+
+        txtDomanda.setName("txtDomanda"); // NOI18N
+        jPanel1.add(txtDomanda, java.awt.BorderLayout.PAGE_END);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.insets = new java.awt.Insets(6, 0, 37, 0);
         getContentPane().add(jPanel1, gridBagConstraints);
 
+        jButton1.setText("Chiedi");
+        jButton1.setName("btnChiedi"); // NOI18N
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        getContentPane().add(jButton1, gridBagConstraints);
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    public static void connetti() {
+        try {
+            Socket socket = new Socket("localhost", 5000);
+            DataInputStream in = new DataInputStream(socket.getInputStream());
+            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+        } catch (IOException e) {
+        }
+        
+
+    }
+    
+    private void getPersona(String percorso){
+        try (BufferedReader reader = new BufferedReader(new FileReader(percorso))) {
+            String riga;
+            while ((riga = reader.readLine()) != null) {
+                riga = riga.trim();
+                if (riga.isEmpty() || riga.startsWith("#")) {
+                    continue;
+                }
+                String[] parti = riga.split("=", 2);
+                if (parti.length == 2) {
+                    cbPersona.addItem(parti[0].trim());
+                }
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(rootPane, e);
+        }
+    }
 
     /**
      * @param args the command line arguments
@@ -74,12 +139,18 @@ public class GUIOracolo extends javax.swing.JFrame {
         }
         //</editor-fold>
 
+        
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new GUIOracolo().setVisible(true));
+        connetti();
+        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> cbPersona;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JTextField txtDomanda;
     // End of variables declaration//GEN-END:variables
 }
