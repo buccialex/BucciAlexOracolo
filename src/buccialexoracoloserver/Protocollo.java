@@ -44,7 +44,7 @@ public class Protocollo {
                     return "ERRORE_PERSONALITA_MANCANTE";
                 }
                 personalita = parametro;
-                return "OK_PERSONA_" + personalita;
+                return null;
             case COMANDO_DOMANDA:
                 if (parametro.isEmpty()) {
                     return "ERRORE_DOMANDA_MANCANTE";

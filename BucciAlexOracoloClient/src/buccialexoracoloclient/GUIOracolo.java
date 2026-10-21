@@ -26,7 +26,9 @@ public class GUIOracolo extends javax.swing.JFrame {
      */
     public GUIOracolo() {
         initComponents();
+        connetti();
         getPersona("risposte.txt");
+
     }
 
     /**
@@ -58,6 +60,11 @@ public class GUIOracolo extends javax.swing.JFrame {
         jPanel1.add(jLabel1, java.awt.BorderLayout.CENTER);
 
         cbPersona.setName("cbPersona"); // NOI18N
+        cbPersona.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbPersonaActionPerformed(evt);
+            }
+        });
         jPanel1.add(cbPersona, java.awt.BorderLayout.PAGE_START);
 
         txtDomanda.setName("txtDomanda"); // NOI18N
@@ -86,21 +93,32 @@ public class GUIOracolo extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        if (!txtDomanda.getText().isEmpty()) {
+            
+            inviaDomanda(txtDomanda.getText().trim());
+        }
+
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    public static void connetti() {
+    private void cbPersonaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbPersonaActionPerformed
+        if(cbPersona.getSelectedItem() != null){
+            inviaPersona(cbPersona.getSelectedItem().toString());
+        }
+
+    }//GEN-LAST:event_cbPersonaActionPerformed
+
+    private static void connetti() {
         try {
-            Socket socket = new Socket("localhost", 5000);
-            DataInputStream in = new DataInputStream(socket.getInputStream());
-            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+            socket = new Socket("localhost", 5000);
+            in = new DataInputStream(socket.getInputStream());
+            out = new DataOutputStream(socket.getOutputStream());
         } catch (IOException e) {
         }
-        
 
     }
-    
-    private void getPersona(String percorso){
+
+    private void getPersona(String percorso) {
         try (BufferedReader reader = new BufferedReader(new FileReader(percorso))) {
             String riga;
             while ((riga = reader.readLine()) != null) {
@@ -115,6 +133,39 @@ public class GUIOracolo extends javax.swing.JFrame {
             }
         } catch (IOException e) {
             JOptionPane.showMessageDialog(rootPane, e);
+        }
+    }
+
+    private void inviaPersona(String persona) {
+        if (out == null) {
+            return;
+        }
+        try {
+            out.writeUTF("PERSONA_" + persona);
+            out.flush();                       // niente readUTF
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(rootPane, "Problema di comunicazione con il server");
+        }
+    }
+
+    private void inviaDomanda(String testo) {
+        if (out == null || in == null) {
+            JOptionPane.showMessageDialog(this, "Non sei connesso al server");
+            return;
+        }
+        try {
+            
+                
+                
+            
+                out.writeUTF("DOMANDA_" + testo);
+                out.flush();
+                String risposta = in.readUTF();
+                jLabel1.setText("<html>" + risposta + "</html>");
+            
+            
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(rootPane, "Problema di comunicazione con il server");
         }
     }
 
@@ -139,13 +190,15 @@ public class GUIOracolo extends javax.swing.JFrame {
         }
         //</editor-fold>
 
-        
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new GUIOracolo().setVisible(true));
-        connetti();
-        
+
     }
 
+    String domanda;
+    static Socket socket;
+    static DataInputStream in;
+    static DataOutputStream out;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> cbPersona;
     private javax.swing.JButton jButton1;

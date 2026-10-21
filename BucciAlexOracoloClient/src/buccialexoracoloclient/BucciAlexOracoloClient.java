@@ -16,8 +16,17 @@ import java.util.Scanner;
  */
 public class BucciAlexOracoloClient {
     
-
+    
+    
+    
+    
+    
+    
+    
+    
+    
     public static void main(String[] args) {
+        /*    codice funzionante per la comunicazione tramite terminale
         try (Socket socket = new Socket("localhost", 5000);
              DataInputStream in = new DataInputStream(socket.getInputStream());
              DataOutputStream out = new DataOutputStream(socket.getOutputStream());
@@ -42,6 +51,13 @@ public class BucciAlexOracoloClient {
         } catch (IOException ex) {
             System.err.println("Impossibile comunicare con il server: " + ex.getMessage());
         }
+*/
+        
+        
+        GUIOracolo f = new GUIOracolo();
+    f.setVisible(true);
+        
     }
+
     
 }

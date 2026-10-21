@@ -50,9 +50,10 @@ public class GestoreClient implements Runnable {
             while (attivo) {
                 String messaggio = in.readUTF();
                 String risposta = protocollo.interpreta(messaggio);
-                out.writeUTF(risposta);
-                out.flush();
-            }
+                if(risposta != null)
+                    out.writeUTF(risposta);
+                    out.flush();
+                }
         } catch (IOException ex) {
             if (attivo) {
                 System.err.println("Connessione client interrotta: " + ex.getMessage());
