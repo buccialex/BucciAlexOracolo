@@ -42,6 +42,7 @@ public class GUIRisposta extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Attendi...");
         setPreferredSize(new java.awt.Dimension(800, 600));
 
         jPanel1.setBackground(new java.awt.Color(102, 102, 255));

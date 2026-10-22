@@ -10,7 +10,6 @@ package buccialexoracoloserver;
  */
 public class Protocollo {
 
-    private final String AIUTO = "HELP";
     private final String COMANDO_PERSONA = "PERSONA";
     private final String COMANDO_DOMANDA = "DOMANDA";
     private String domanda;
@@ -23,22 +22,19 @@ public class Protocollo {
         this.gestoreRisposte = gestoreRisposte;
     }
 
-    public synchronized String interpreta(String messaggio) {
+    public String interpreta(String messaggio) {
         if (messaggio == null) {
             return "ERRORE_MESSAGGIO_NULLO";
         }
 
         String comando = messaggio.trim();
         int separatore = comando.indexOf('_');
+        
         String tipoComando = separatore >= 0 ? comando.substring(0, separatore) : comando;
         String parametro = separatore >= 0 ? comando.substring(separatore + 1).trim() : "";
 
         switch (tipoComando) {
-            case AIUTO:
-                if (!AIUTO.equals(comando)) {
-                    return "ERRORE_COMANDO_NON_RICONOSCIUTO";
-                }
-                return "HELP: PERSONA_[parametroPersonalita], DOMANDA_[parametroDomanda], HELP";
+            
             case COMANDO_PERSONA:
                 if (parametro.isEmpty()) {
                     return "ERRORE_PERSONALITA_MANCANTE";
@@ -61,11 +57,11 @@ public class Protocollo {
         }
     }
 
-    public synchronized String getDomanda() {
+    public String getDomanda() {
         return domanda;
     }
 
-    public synchronized String getPersonalita() {
+    public String getPersonalita() {
         return personalita;
     }
 }

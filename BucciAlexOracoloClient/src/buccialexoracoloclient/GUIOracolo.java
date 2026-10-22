@@ -48,6 +48,7 @@ public class GUIOracolo extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Zoltar - L'oracolo");
         setPreferredSize(new java.awt.Dimension(800, 600));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
@@ -101,7 +102,7 @@ public class GUIOracolo extends javax.swing.JFrame {
         if (!txtDomanda.getText().isEmpty()) {
 
             inviaDomanda(txtDomanda.getText().trim());
-            
+
         }
 
 
@@ -154,7 +155,7 @@ public class GUIOracolo extends javax.swing.JFrame {
         }
         try {
             out.writeUTF("PERSONA_" + persona);
-            out.flush();                       // niente readUTF
+            out.flush();
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(rootPane, "Problema di comunicazione con il server");
         }

@@ -14,9 +14,9 @@ import java.net.Socket;
  */
 public class Server {
 
-    private final int porta;
+    private int porta;
     private ServerSocket serverSocket;
-    private volatile boolean attivo;
+    private boolean attivo;
     private GestoreFile gestoreRisposte;
 
     public Server() {
@@ -38,10 +38,6 @@ public class Server {
 
                 GestoreClient gestore = new GestoreClient(clientSocket, this, gestoreRisposte);
                 new Thread(gestore, "gestore-client-" + clientSocket.getPort()).start();
-
-                
-                    
-                
 
             }
         } catch (IOException e) {
