@@ -27,7 +27,7 @@ public class GUIOracolo extends javax.swing.JFrame {
     public GUIOracolo() {
         initComponents();
         connetti();
-        getPersona("risposte.txt");
+        getPersona("../BucciAlexOracoloClient/risposte.txt");
 
     }
 
@@ -48,6 +48,7 @@ public class GUIOracolo extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setPreferredSize(new java.awt.Dimension(800, 600));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jPanel1.setBackground(new java.awt.Color(204, 255, 204));
@@ -56,7 +57,8 @@ public class GUIOracolo extends javax.swing.JFrame {
         jPanel1.setLayout(new java.awt.BorderLayout());
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
-        jLabel1.setText("ORACOLO");
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("ZOLTAR");
         jPanel1.add(jLabel1, java.awt.BorderLayout.CENTER);
 
         cbPersona.setName("cbPersona"); // NOI18N
@@ -73,6 +75,9 @@ public class GUIOracolo extends javax.swing.JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.ipadx = 106;
+        gridBagConstraints.ipady = 101;
         gridBagConstraints.insets = new java.awt.Insets(6, 0, 37, 0);
         getContentPane().add(jPanel1, gridBagConstraints);
 
@@ -94,15 +99,16 @@ public class GUIOracolo extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         if (!txtDomanda.getText().isEmpty()) {
-            
+
             inviaDomanda(txtDomanda.getText().trim());
+            
         }
 
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void cbPersonaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbPersonaActionPerformed
-        if(cbPersona.getSelectedItem() != null){
+        if (cbPersona.getSelectedItem() != null) {
             inviaPersona(cbPersona.getSelectedItem().toString());
         }
 
@@ -119,6 +125,7 @@ public class GUIOracolo extends javax.swing.JFrame {
     }
 
     private void getPersona(String percorso) {
+        java.util.Set<String> nomi = new java.util.LinkedHashSet<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(percorso))) {
             String riga;
             while ((riga = reader.readLine()) != null) {
@@ -128,11 +135,16 @@ public class GUIOracolo extends javax.swing.JFrame {
                 }
                 String[] parti = riga.split("=", 2);
                 if (parti.length == 2) {
-                    cbPersona.addItem(parti[0].trim());
+                    nomi.add(parti[0].trim());   // il Set ignora i doppioni
                 }
             }
         } catch (IOException e) {
             JOptionPane.showMessageDialog(rootPane, e);
+            return;
+        }
+
+        for (String nome : nomi) {
+            cbPersona.addItem(nome);
         }
     }
 
@@ -154,16 +166,14 @@ public class GUIOracolo extends javax.swing.JFrame {
             return;
         }
         try {
-            
-                
-                
-            
-                out.writeUTF("DOMANDA_" + testo);
-                out.flush();
-                String risposta = in.readUTF();
-                jLabel1.setText("<html>" + risposta + "</html>");
-            
-            
+
+            out.writeUTF("DOMANDA_" + testo);
+            out.flush();
+            String risposta = in.readUTF().replace("ORACOLO: ", "");
+            txtDomanda.setText("");
+            new GUIRisposta(risposta, this).setVisible(true);
+            this.setVisible(false);
+
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(rootPane, "Problema di comunicazione con il server");
         }

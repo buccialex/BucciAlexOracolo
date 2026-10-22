@@ -3,8 +3,12 @@ package buccialexoracoloserver;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -16,7 +20,8 @@ import java.util.Map;
  */
 public class GestoreFile {
     
-    private final Map<String, String> risposte = new HashMap<>();
+    private final Map<String, List<String>> risposte = new LinkedHashMap<>();
+    private Random r = new Random();
     
     public GestoreFile(){}
     
@@ -30,7 +35,7 @@ public class GestoreFile {
                 }
                 String[] parti = riga.split("=", 2);
                 if (parti.length == 2) {
-                    risposte.put(parti[0].trim().toUpperCase(), parti[1].trim());
+                    risposte.computeIfAbsent(parti[0].trim().toUpperCase(), k -> new ArrayList<>()).add(parti[1].trim());
                 }
             }
         }
@@ -40,9 +45,10 @@ public class GestoreFile {
         if (personalita == null || personalita.trim().isEmpty()) {
             return "ERRORE_PERSONALITA_NON_DEFINITA";
         }
-        return risposte.getOrDefault(
-            personalita.trim().toUpperCase(), 
-            "ERRORE_NESSUNA_RISPOSTA_PER_QUESTA_PERSONALITA"
-        );
+        List<String> lista = risposte.get(personalita.trim().toUpperCase());
+        if(lista == null || lista.isEmpty()){
+            return "ERRORE_NESSUNA_RISPOSTA_PER_QUESTA_PERSONA";
+        }
+        return lista.get(r.nextInt(lista.size()));
     }
 }

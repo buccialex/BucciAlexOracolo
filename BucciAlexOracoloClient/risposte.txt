@@ -1,6 +1,9 @@
 SAGGIO=La pazienza e la chiave di ogni soluzione.
 #prova
 COMICO=Hai provato a spegnere e riaccendere la tua vita?
+COMICO=comico2
+COMICO=comico3
 PESSIMISTA=Non funzionera comunque nulla, mi dispiace.
 SERIO=Focalizzati sui tuoi obiettivi e agisci di conseguenza.
 ELDEGO=ELDEGONEPUNTOBAT
+ELDEGO=eldegonee

@@ -27,7 +27,7 @@ public class Server {
     public void avvia() {
         try {
 
-            gestoreRisposte.caricaRisposte("risposte.txt");
+            gestoreRisposte.caricaRisposte("BucciAlexOracoloClient/risposte.txt");
 
             serverSocket = new ServerSocket(porta);
             attivo = true;
