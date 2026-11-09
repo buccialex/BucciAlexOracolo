@@ -1,5 +1,9 @@
 package buccialexoracoloserver;
 
+
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -15,6 +19,7 @@ public class Protocollo {
     private String domanda;
     private String personalita;
     private GestoreFile gestoreRisposte;
+    private final Gson gson = new Gson();
 
     public Protocollo(GestoreFile gestoreRisposte) {
         this.domanda = "";
@@ -26,34 +31,48 @@ public class Protocollo {
         if (messaggio == null) {
             return "ERRORE_MESSAGGIO_NULLO";
         }
-
-        String comando = messaggio.trim();
-        int separatore = comando.indexOf('_');
         
-        String tipoComando = separatore >= 0 ? comando.substring(0, separatore) : comando;
-        String parametro = separatore >= 0 ? comando.substring(separatore + 1).trim() : "";
+        Richiesta richiesta;
+        try {
+            richiesta = gson.fromJson(messaggio, Richiesta.class);
+        } catch (JsonSyntaxException e) {
+            return errore("ERRORE_JSON_NON_VALIDO");
+        }
+        if (richiesta == null || richiesta.getComando() == null) {
+            return errore("ERRORE_COMANDO_NON_RICONOSCIUTO");
+        }
+
+        
+        
+        String tipoComando = richiesta.getComando().trim();
+        String parametro = richiesta.getParametro() == null ? "" : richiesta.getParametro().trim();
 
         switch (tipoComando) {
             
             case COMANDO_PERSONA:
                 if (parametro.isEmpty()) {
-                    return "ERRORE_PERSONALITA_MANCANTE";
+                    return errore("ERRORE_PERSONALITA_MANCANTE");
                 }
                 personalita = parametro;
                 return null;
             case COMANDO_DOMANDA:
                 if (parametro.isEmpty()) {
-                    return "ERRORE_DOMANDA_MANCANTE";
+                    return errore("ERRORE_DOMANDA_MANCANTE");
                 }
                 if (personalita.isEmpty()) {
-                    return "ERRORE_DEVI_PRIMA_IMPOSTARE_UNA_PERSONALITA";
+                    return errore("ERRORE_DEVI_PRIMA_IMPOSTARE_UNA_PERSONALITA");
                 }
                 domanda = parametro;
 
-                return "ORACOLO: " + gestoreRisposte.getRisposta(personalita);
+                String testo = gestoreRisposte.getRisposta(personalita);
+                if (testo.startsWith("ERRORE_")) {
+                    return errore(testo);
+                }
+                return gson.toJson(new Risposta(Risposta.TIPO_ORACOLO, testo));
+
 
             default:
-                return "ERRORE_COMANDO_NON_RICONOSCIUTO";
+                return errore("ERRORE_COMANDO_NON_RICONOSCIUTO");
         }
     }
 
@@ -64,4 +83,11 @@ public class Protocollo {
     public String getPersonalita() {
         return personalita;
     }
+    
+    
+    private String errore(String codice) {
+        return gson.toJson(new Risposta(Risposta.TIPO_ERRORE, codice));
+    }
+
+    
 }

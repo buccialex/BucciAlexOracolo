@@ -4,6 +4,8 @@
  */
 package buccialexoracoloclient;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -154,7 +156,7 @@ public class GUIOracolo extends javax.swing.JFrame {
             return;
         }
         try {
-            out.writeUTF("PERSONA_" + persona);
+            out.writeUTF(gson.toJson(new Richiesta("PERSONA", persona)));
             out.flush();
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(rootPane, "Problema di comunicazione con il server");
@@ -168,16 +170,29 @@ public class GUIOracolo extends javax.swing.JFrame {
         }
         try {
 
-            out.writeUTF("DOMANDA_" + testo);
+            out.writeUTF(gson.toJson(new Richiesta("DOMANDA", testo)));
             out.flush();
-            String risposta = in.readUTF().replace("ORACOLO: ", "");
+            
+            Risposta risposta = gson.fromJson(in.readUTF(), Risposta.class);
+            if (risposta == null || risposta.getTipo() == null) {
+                JOptionPane.showMessageDialog(rootPane, "Risposta del server non valida");
+                return;
+            }
+            if (Risposta.TIPO_ERRORE.equals(risposta.getTipo())) {
+                JOptionPane.showMessageDialog(rootPane, risposta.getMessaggio(), "Errore", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
             txtDomanda.setText("");
-            new GUIRisposta(risposta, this).setVisible(true);
+            new GUIRisposta(risposta.getMessaggio(), this).setVisible(true);
             this.setVisible(false);
 
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(rootPane, "Problema di comunicazione con il server");
+        } catch (JsonSyntaxException ex) {
+            JOptionPane.showMessageDialog(rootPane, "Risposta del server non valida");
         }
+
     }
 
     /**
@@ -207,6 +222,8 @@ public class GUIOracolo extends javax.swing.JFrame {
     }
 
     String domanda;
+    private final Gson gson = new Gson();
+
     static Socket socket;
     static DataInputStream in;
     static DataOutputStream out;
