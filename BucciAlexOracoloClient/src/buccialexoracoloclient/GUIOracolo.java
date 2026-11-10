@@ -5,6 +5,8 @@
 package buccialexoracoloclient;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -29,7 +31,7 @@ public class GUIOracolo extends javax.swing.JFrame {
     public GUIOracolo() {
         initComponents();
         connetti();
-        getPersona("../BucciAlexOracoloClient/risposte.txt");
+        getPersona("../BucciAlexOracoloClient/risposte.json");
 
     }
 
@@ -128,27 +130,15 @@ public class GUIOracolo extends javax.swing.JFrame {
     }
 
     private void getPersona(String percorso) {
-        java.util.Set<String> nomi = new java.util.LinkedHashSet<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(percorso))) {
-            String riga;
-            while ((riga = reader.readLine()) != null) {
-                riga = riga.trim();
-                if (riga.isEmpty() || riga.startsWith("#")) {
-                    continue;
-                }
-                String[] parti = riga.split("=", 2);
-                if (parti.length == 2) {
-                    nomi.add(parti[0].trim());   // il Set ignora i doppioni
-                }
-            }
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(rootPane, e);
-            return;
+        try (FileReader reader = new FileReader(percorso)) {
+        JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
+        cbPersona.removeAllItems();
+        for (String nomePersona : jsonObject.keySet()) {
+            cbPersona.addItem(nomePersona);
         }
-
-        for (String nome : nomi) {
-            cbPersona.addItem(nome);
-        }
+    } catch (IOException e) {
+        JOptionPane.showMessageDialog(rootPane, "Errore nella lettura del file JSON: " + e.getMessage());
+    }
     }
 
     private void inviaPersona(String persona) {

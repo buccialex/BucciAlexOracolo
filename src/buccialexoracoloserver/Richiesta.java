@@ -14,20 +14,14 @@ public class Richiesta {
     private String comando;
     private String parametro;
 
-    public Richiesta() {
-    }
+    public Richiesta() {}
 
     public Richiesta(String comando, String parametro) {
         this.comando = comando;
         this.parametro = parametro;
     }
 
-    public String getComando() {
-        return comando;
-    }
-
-    public String getParametro() {
-        return parametro;
-    }
+    public String getComando() { return comando; }
+    public String getParametro() { return parametro; }
 
 }

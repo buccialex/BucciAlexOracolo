@@ -16,20 +16,14 @@ public class Risposta {
     private String tipo;
     private String messaggio;
 
-    public Risposta() {
-    }
+    public Risposta() {}
 
     public Risposta(String tipo, String messaggio) {
         this.tipo = tipo;
         this.messaggio = messaggio;
     }
 
-    public String getTipo() {
-        return tipo;
-    }
-
-    public String getMessaggio() {
-        return messaggio;
-    }
+    public String getTipo() { return tipo; }
+    public String getMessaggio() { return messaggio; }
 
 }

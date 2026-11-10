@@ -18,10 +18,10 @@ public class Protocollo {
     private final String COMANDO_DOMANDA = "DOMANDA";
     private String domanda;
     private String personalita;
-    private GestoreFile gestoreRisposte;
+    private IGestoreJson gestoreRisposte;
     private final Gson gson = new Gson();
-
-    public Protocollo(GestoreFile gestoreRisposte) {
+    
+    public Protocollo(IGestoreJson gestoreRisposte) {
         this.domanda = "";
         this.personalita = "";
         this.gestoreRisposte = gestoreRisposte;
@@ -29,7 +29,7 @@ public class Protocollo {
 
     public String interpreta(String messaggio) {
         if (messaggio == null) {
-            return "ERRORE_MESSAGGIO_NULLO";
+            return errore("ERRORE_MESSAGGIO_NULLO");
         }
         
         Richiesta richiesta;
@@ -38,23 +38,22 @@ public class Protocollo {
         } catch (JsonSyntaxException e) {
             return errore("ERRORE_JSON_NON_VALIDO");
         }
+
         if (richiesta == null || richiesta.getComando() == null) {
             return errore("ERRORE_COMANDO_NON_RICONOSCIUTO");
         }
 
-        
-        
         String tipoComando = richiesta.getComando().trim();
         String parametro = richiesta.getParametro() == null ? "" : richiesta.getParametro().trim();
 
         switch (tipoComando) {
-            
             case COMANDO_PERSONA:
                 if (parametro.isEmpty()) {
                     return errore("ERRORE_PERSONALITA_MANCANTE");
                 }
                 personalita = parametro;
                 return null;
+
             case COMANDO_DOMANDA:
                 if (parametro.isEmpty()) {
                     return errore("ERRORE_DOMANDA_MANCANTE");
@@ -69,7 +68,6 @@ public class Protocollo {
                     return errore(testo);
                 }
                 return gson.toJson(new Risposta(Risposta.TIPO_ORACOLO, testo));
-
 
             default:
                 return errore("ERRORE_COMANDO_NON_RICONOSCIUTO");

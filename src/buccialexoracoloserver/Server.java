@@ -4,6 +4,7 @@
  */
 package buccialexoracoloserver;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -17,7 +18,7 @@ public class Server {
     private int porta;
     private ServerSocket serverSocket;
     private boolean attivo;
-    private GestoreFile gestoreRisposte;
+    private IGestoreJson gestoreRisposte;
 
     public Server() {
         this.porta = 5000;
@@ -26,8 +27,16 @@ public class Server {
 
     public void avvia() {
         try {
+            String percorsoJson = "BucciAlexOracoloClient/risposte.json";
+            File fileJson = new File(percorsoJson);
 
-            gestoreRisposte.caricaRisposte("BucciAlexOracoloClient/risposte.txt");
+            // Genera il file JSON con tutte le risposte se non esiste ancora
+            if (!fileJson.exists()) {
+                gestoreRisposte.creaJsonRisposte(percorsoJson);
+            }
+
+            // Carica le risposte in memoria
+            gestoreRisposte.caricaRisposte(percorsoJson);
 
             serverSocket = new ServerSocket(porta);
             attivo = true;
@@ -35,10 +44,8 @@ public class Server {
 
             while (attivo) {
                 Socket clientSocket = serverSocket.accept();
-
-                GestoreClient gestore = new GestoreClient(clientSocket, this, gestoreRisposte);
+                GestoreClient gestore = new GestoreClient(clientSocket, this, (GestoreFile) gestoreRisposte);
                 new Thread(gestore, "gestore-client-" + clientSocket.getPort()).start();
-
             }
         } catch (IOException e) {
             ferma();
